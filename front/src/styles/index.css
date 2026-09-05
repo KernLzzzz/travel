@@ -1,0 +1,170 @@
+/**
+ * 全局样式：设计令牌（Design Tokens）+ 基础样式 + 通用工具类
+ * 活力杂志风（Vibrant Magazine）
+ * 主色：橙红 Ember，辅色：森林绿 Forest、丁香紫 Lilac、墨黑 Ink
+ */
+
+/* ================= 亮色主题令牌 ================= */
+:root {
+  /* 主色：活力橙 */
+  --color-primary: #f56c0a;
+  --color-primary-hover: #d85a04;
+  --color-primary-light: #fff4eb;
+
+  /* 语义色 */
+  --color-success: #15803d;
+  --color-warning: #f59e0b;
+  --color-danger: #dc2626;
+
+  /* 背景 */
+  --color-bg: #f9f7f5;
+  --color-card: #ffffff;
+  --color-hover: #f3f0ed;
+
+  /* 文字 */
+  --color-text: #1f1f1f;
+  --color-text-secondary: #6b6560;
+  --color-text-placeholder: #a8a29e;
+
+  /* 边框 */
+  --color-border: #ece5df;
+  --color-border-light: #f6f2ee;
+
+  /* 杂志风强调色 */
+  --color-ember: #f56c0a;
+  --color-ember-light: #fff4eb;
+  --color-forest: #15803d;
+  --color-forest-light: #ecfdf5;
+  --color-lilac: #8b5cf6;
+  --color-lilac-light: #f3f0ff;
+  --color-coral: #f43f5e;
+  --color-teal: #0d9488;
+
+  /* 阴影与圆角 */
+  --shadow-card: 0 2px 8px rgba(31, 31, 31, 0.06), 0 8px 24px rgba(31, 31, 31, 0.04);
+  --shadow-hover: 0 8px 24px rgba(245, 108, 10, 0.14);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+
+  /* 布局尺寸 */
+  --sidebar-width: 240px;
+  --header-height: 64px;
+
+  /* Element Plus 主色覆写 */
+  --el-color-primary: #f56c0a;
+}
+
+/* ================= 深色主题令牌 ================= */
+html.dark {
+  --color-bg: #121212;
+  --color-card: #1e1e1e;
+  --color-hover: #2a2a2a;
+
+  --color-text: #f5f5f5;
+  --color-text-secondary: #a8a29e;
+  --color-text-placeholder: #78716c;
+
+  --color-border: #2a2a2a;
+  --color-border-light: #262626;
+
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 8px 24px rgba(245, 108, 10, 0.22);
+}
+
+/* ================= 基础重置 ================= */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-size: 14px;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.3s, color 0.3s;
+}
+
+#app {
+  height: 100%;
+}
+
+/* ================= 通用组件类 ================= */
+
+/** 卡片容器 */
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 20px;
+  transition: box-shadow 0.3s, transform 0.2s;
+}
+
+.card.hoverable:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/** 页面标题 */
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0 0 20px;
+}
+
+/** 标签徽章 */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+/** 空状态描述 */
+.empty-text {
+  color: var(--color-text-placeholder);
+  font-size: 13px;
+}
+
+/** 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/** 数字金额 */
+.amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--color-primary);
+}

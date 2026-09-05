@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="远行者 - 基于大模型的个性化旅游规划与 AI 问答平台" />
+    <title>远行者 · AI Travel Planner</title>
+    <style>
+      /* 首屏加载时的占位，避免白屏 */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: #f9f7f5;
+      }
+      #app-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #909399;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"><div id="app-loading">正在加载…</div></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
