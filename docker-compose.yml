@@ -1,0 +1,132 @@
+# ============================================================
+#  智能旅游助手 · 一键编排
+#
+#  三个服务：
+#    mysql    数据持久化（首次启动自动建库建表）
+#    backend  Express + LangChain + SSE 流式 AI 服务
+#    frontend Vue3 构建产物 + Nginx（静态托管 & /api 反向代理）
+#
+#  用法：
+#    cp .env.example .env        # 按需修改，尤其是 JWT_SECRET 与 LLM_API_KEY
+#    docker compose up -d --build
+#    docker compose ps           # 三个服务均为 healthy 后访问 http://localhost
+# ============================================================
+
+services:
+  # ------------------------------------------------------------
+  #  MySQL 8.0
+  # ------------------------------------------------------------
+  mysql:
+    image: mysql:8.0
+    container_name: travel-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-travel_ai_root_pwd}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-travel_ai}
+      MYSQL_USER: ${MYSQL_USER:-travel}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-travel_ai_pwd}
+      TZ: Asia/Shanghai
+    ports:
+      # 主机端口默认 3307，避开本机可能已占用 3306 的 MySQL
+      - "${MYSQL_HOST_PORT:-3307}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      # 仅当数据卷为空（首次启动）时执行：自动建库建表
+      # 注意：schema.sql 内含 DROP TABLE，不会在后续重启时重复执行
+      - ./backend/sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+08:00
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-travel_ai_root_pwd}"]
+      interval: 10s
+      timeout: 5s
+      start_period: 40s
+      retries: 10
+    networks:
+      - travel-net
+
+  # ------------------------------------------------------------
+  #  后端服务
+  # ------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: travel-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      TZ: Asia/Shanghai
+
+      # 容器内由 Nginx 同源代理，无需跨域；保留变量便于直连调试
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
+
+      # ⚠️ 生产部署务必在 .env 中改成高强度随机串
+      JWT_SECRET: ${JWT_SECRET:?请在 .env 中设置 JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+
+      # ---- 大模型配置（留空则自动启用 Mock 模式，无需 Key 也可完整演示）----
+      LLM_PROVIDER: ${LLM_PROVIDER:-siliconflow}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-Qwen/Qwen2.5-72B-Instruct}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_TEMPERATURE: ${LLM_TEMPERATURE:-0.7}
+      LLM_MAX_TOKENS: ${LLM_MAX_TOKENS:-4096}
+
+      # ---- 数据库：容器网络内直接用服务名访问 ----
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-travel_ai_root_pwd}
+      DB_NAME: ${MYSQL_DATABASE:-travel_ai}
+
+      # ---- AI 网关调优参数 ----
+      AI_MAX_CONCURRENCY: ${AI_MAX_CONCURRENCY:-5}
+      AI_TIMEOUT_MS: ${AI_TIMEOUT_MS:-120000}
+      AI_STALL_MS: ${AI_STALL_MS:-30000}
+      AI_RATE_CAPACITY: ${AI_RATE_CAPACITY:-10}
+      AI_RATE_REFILL: ${AI_RATE_REFILL:-0.1667}
+      AI_CACHE_MAX: ${AI_CACHE_MAX:-100}
+      AI_CACHE_TTL_MS: ${AI_CACHE_TTL_MS:-600000}
+    # 后端默认不暴露到主机端口：容器网络内由 Nginx 通过服务名 backend:3000 代理，
+    # 减少对外攻击面。需要直连调试时，取消下面三行注释即可。
+    # ports:
+    #   - "${BACKEND_HOST_PORT:-3000}:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - travel-net
+
+  # ------------------------------------------------------------
+  #  前端（Nginx）
+  # ------------------------------------------------------------
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: travel-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_HOST_PORT:-80}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - travel-net
+
+# ------------------------------------------------------------
+#  数据卷：MySQL 数据独立于容器生命周期，重建容器不丢数据
+# ------------------------------------------------------------
+volumes:
+  mysql-data:
+
+# ------------------------------------------------------------
+#  独立桥接网络：三个服务隔离在自己的网段内，仅 frontend 对外暴露
+# ------------------------------------------------------------
+networks:
+  travel-net:
+    driver: bridge

@@ -1,0 +1,17 @@
+# 构建上下文忽略清单
+node_modules
+npm-debug.log*
+dist
+.git
+.gitignore
+.idea
+.vscode
+*.log
+
+# 本地环境变量不进镜像
+.env
+.env.*
+!.env.example
+
+# 设计文档不进前端镜像
+*.pdf

@@ -1,0 +1,17 @@
+# 构建上下文忽略清单：减小镜像体积、避免本地敏感文件被打进镜像
+node_modules
+npm-debug.log*
+dist
+.git
+.gitignore
+.idea
+.vscode
+*.log
+
+# ⚠️ 本地 .env 含真实密钥，绝不可进入镜像
+# 运行期配置统一由 docker-compose 通过 environment 注入
+.env
+.env.*
+!.env.example
+
+sql/migrations
