@@ -1,0 +1,41 @@
+# ============================================================
+#  统一换行符：仓库内一律以 LF 存储，检出时按平台自动转换
+#  避免 Windows(CRLF) / Linux(LF) 协作时整文件 diff 爆红
+# ============================================================
+* text=auto eol=lf
+
+# ---------- 源码：明确按文本处理 ----------
+*.js      text eol=lf
+*.mjs     text eol=lf
+*.cjs     text eol=lf
+*.vue     text eol=lf
+*.json    text eol=lf
+*.css     text eol=lf
+*.scss    text eol=lf
+*.html    text eol=lf
+*.md      text eol=lf
+*.sql     text eol=lf
+*.yml     text eol=lf
+*.yaml    text eol=lf
+*.conf    text eol=lf
+*.sh      text eol=lf
+Dockerfile      text eol=lf
+.dockerignore   text eol=lf
+.gitattributes  text eol=lf
+.gitignore      text eol=lf
+
+# ---------- 二进制：禁止做任何转换 ----------
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.svg  binary
+*.ico  binary
+*.pdf  binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.eot   binary
+
+# ---------- 语言统计：锁定文件不计入项目语言占比 ----------
+package-lock.json linguist-generated=true

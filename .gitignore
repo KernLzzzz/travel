@@ -1,0 +1,56 @@
+# ============================================================
+#  智能旅游助手 · 全局忽略规则
+# ============================================================
+
+# ---------- 依赖目录 ----------
+node_modules/
+**/node_modules/
+jspm_packages/
+
+# ---------- 构建产物 ----------
+dist/
+build/
+**/dist/
+**/build/
+.vite/
+.cache/
+
+# ---------- 环境变量与密钥（⚠️ 绝不提交）----------
+# 后端 .env 中存放着大模型 API Key、JWT 密钥与数据库口令，一旦推送到
+# 公开仓库就会被自动化爬虫秒级抓取并盗刷，务必保持忽略。
+.env
+.env.*
+!.env.example
+!.env.*.example
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.*.example
+
+# ---------- 日志 ----------
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---------- 编辑器 / IDE ----------
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ---------- 测试与临时文件 ----------
+coverage/
+.temp/
+.tmp/
+*.local
+
+# ---------- Docker 挂载产生的本地数据 ----------
+mysql-data/
