@@ -48,16 +48,15 @@ services:
       - travel-net
 
   # ------------------------------------------------------------
-  #  后端服务
+  #  Spring Boot 后端服务
   # ------------------------------------------------------------
   backend:
     build:
-      context: ./backend
+      context: ./backend-java
       dockerfile: Dockerfile
     container_name: travel-backend
     restart: unless-stopped
     environment:
-      NODE_ENV: production
       PORT: 3000
       TZ: Asia/Shanghai
 
